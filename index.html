@@ -474,6 +474,68 @@
                 width: 400px;
             }
         }
+
+        /* New UI Styles */
+        .meal-type-container {
+            display: flex;
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .meal-type-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #666;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 1em;
+        }
+
+        .meal-type-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Optimized Stats Layout */
+        .stats {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: nowrap;
+            /* Force single row */
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 5px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            /* Distribute space equally */
+            min-width: 0;
+            /* Allow shrinking */
+        }
+
+        .stat-card .number {
+            font-size: 1.5em;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .stat-card .label {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
     </style>
 </head>
 
@@ -507,16 +569,12 @@
                     <button onclick="toggleApiKeySection()" style="background: #6c757d; font-size: 0.9em;">🔑
                         設定金鑰</button>
                 </div>
-                <div class="control-group">
+                <div class="control-group" style="flex: 1 1 100%;">
                     <label>餐別</label>
-                    <select id="mealTypeFilter">
-                        <option value="lunch">午餐</option>
-                        <option value="dinner">晚餐</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>日期篩選</label>
-                    <input type="date" id="dateFilter">
+                    <div class="meal-type-container">
+                        <button class="meal-type-btn active" onclick="setMealType('lunch')" id="btn-lunch">午餐</button>
+                        <button class="meal-type-btn" onclick="setMealType('dinner')" id="btn-dinner">晚餐</button>
+                    </div>
                 </div>
                 <div class="control-group">
                     <label>餐廳篩選</label>
@@ -559,9 +617,10 @@
         let allMenus = [];
         const LUNCH_FOLDER_ID = '1olUeeen0JvMGaVQ7yJ7yLWu6K7m0tx9a';
         const DINNER_FOLDER_ID = '16GoY4m7kegpzAMUMb82NBds8FISt-1zz';
+        let currentMealType = 'lunch';
 
-        // 設定今天日期為預設值
-        document.getElementById('dateFilter').valueAsDate = new Date();
+        // 設定今天日期為預設值 (Removed as source is today only)
+        // document.getElementById('dateFilter').valueAsDate = new Date();
 
         // Check API Key on load
         window.addEventListener('load', () => {
@@ -585,11 +644,20 @@
 
             if (section.style.display === 'none') {
                 section.style.display = 'block';
-                // btn.style.display = 'none'; // Keep button visible to toggle back? Or maybe hide it. Let's keep it but maybe change text?
-                // For simplicity, just show the section.
             } else {
                 section.style.display = 'none';
             }
+        }
+
+        function setMealType(type) {
+            currentMealType = type;
+
+            // Update UI
+            document.querySelectorAll('.meal-type-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${type}`).classList.add('active');
+
+            // Reload
+            loadMenu();
         }
 
         function parseFileName(fileName) {
@@ -646,8 +714,8 @@
             container.innerHTML = '<div class="loading">⏳ 載入菜單中...</div>';
 
             try {
-                const mealType = document.getElementById('mealTypeFilter').value;
-                const folderId = mealType === 'dinner' ? DINNER_FOLDER_ID : LUNCH_FOLDER_ID;
+                // const mealType = document.getElementById('mealTypeFilter').value; // Removed
+                const folderId = currentMealType === 'dinner' ? DINNER_FOLDER_ID : LUNCH_FOLDER_ID;
 
                 const response = await fetch(
                     `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${apiKey}&fields=files(id,name,mimeType,thumbnailLink,webContentLink)&pageSize=1000`
@@ -729,14 +797,17 @@
         }
 
         function displayMenus() {
-            const dateFilter = document.getElementById('dateFilter').value;
+            // const dateFilter = document.getElementById('dateFilter').value; // Removed
             const restaurantFilter = document.getElementById('restaurantFilter').value;
 
             let filteredMenus = allMenus;
 
+            // Date filtering removed as source is guaranteed to be today
+            /*
             if (dateFilter) {
                 filteredMenus = filteredMenus.filter(m => m.date === dateFilter);
             }
+            */
 
             if (restaurantFilter) {
                 filteredMenus = filteredMenus.filter(m => m.restaurant === restaurantFilter);
@@ -800,13 +871,13 @@
         }
 
         function updateStats() {
-            const today = document.getElementById('dateFilter').value;
-            const todayMenus = allMenus.filter(m => m.date === today);
+            // const today = document.getElementById('dateFilter').value; // Removed
+            // const todayMenus = allMenus.filter(m => m.date === today); // Assume all menus are today
             const restaurants = new Set(allMenus.map(m => m.restaurant));
 
             document.getElementById('totalMenus').textContent = allMenus.length;
             document.getElementById('totalRestaurants').textContent = restaurants.size;
-            document.getElementById('todayMenus').textContent = todayMenus.length;
+            document.getElementById('todayMenus').textContent = allMenus.length; // Same as total
             document.getElementById('stats').style.display = 'flex';
         }
 
@@ -837,7 +908,8 @@
         }
 
         // 當篩選條件改變時重新顯示
-        document.getElementById('dateFilter').addEventListener('change', displayMenus);
+        // 當篩選條件改變時重新顯示
+        // document.getElementById('dateFilter').addEventListener('change', displayMenus); // Removed
         document.getElementById('restaurantFilter').addEventListener('change', displayMenus);
 
         // ESC 鍵關閉彈窗

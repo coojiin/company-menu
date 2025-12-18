@@ -737,6 +737,10 @@
                     ? `NT$ ${prices.join(' / ')}`
                     : `NT$ ${prices[0]}`;
 
+                let parsedItem = item.trim();
+                // 移除價錢後面可能出現的「午餐」或「晚餐」字樣
+                parsedItem = parsedItem.replace(/^(午餐|晚餐)/, '').trim();
+
                 return {
                     date: `${year}-${month}-${day}`,
                     dateDisplay: `${month}月${day}日`,
@@ -745,7 +749,7 @@
                     prices: prices,   // 保存所有價格
                     priceDisplay: priceDisplay,
                     hasMultiplePrices: prices.length > 1,
-                    item: item.trim(),
+                    item: parsedItem,
                     fileName: fileName
                 };
             }

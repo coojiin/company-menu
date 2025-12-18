@@ -475,6 +475,57 @@
             }
         }
 
+        /* Desktop Layout (PC) */
+        @media (min-width: 1024px) {
+            .container {
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 30px;
+                align-items: start;
+            }
+
+            header {
+                position: sticky;
+                top: 20px;
+                display: flex;
+                flex-direction: column;
+                max-height: calc(100vh - 40px);
+                overflow-y: auto;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .control-group {
+                flex: 1 1 auto;
+                width: 100%;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .restaurant-section {
+                padding: 30px;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
         /* New UI Styles */
         .meal-type-container {
             display: flex;
@@ -713,6 +764,10 @@
             errorContainer.innerHTML = '';
             container.innerHTML = '<div class="loading">⏳ 載入菜單中...</div>';
 
+            // Reset state explicitly
+            allMenus = [];
+            updateStats();
+
             try {
                 // const mealType = document.getElementById('mealTypeFilter').value; // Removed
                 const folderId = currentMealType === 'dinner' ? DINNER_FOLDER_ID : LUNCH_FOLDER_ID;
@@ -737,6 +792,7 @@
                             <div class="empty-state-text">資料夾中沒有找到任何檔案</div>
                         </div>
                     `;
+                    updateStats(); // Reset stats when no files are found
                     return;
                 }
 
@@ -780,6 +836,7 @@
             } catch (error) {
                 showError(error.message);
                 container.innerHTML = '';
+                updateStats();
             }
         }
 

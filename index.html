@@ -599,31 +599,10 @@
         <header>
             <h1>🍱 公司每日菜單瀏覽器</h1>
 
-            <div id="apiKeySection" style="display: none;">
-                <div class="info-box">
-                    <h3>📋 首次使用設定（只需設定一次）</h3>
-                    <p><strong>步驟 1:</strong> 前往 <a href="https://console.cloud.google.com/" target="_blank"
-                            style="color: #667eea;">Google Cloud Console</a></p>
-                    <p><strong>步驟 2:</strong> 建立新專案 → 啟用「Google Drive API」</p>
-                    <p><strong>步驟 3:</strong> 憑證 → 建立憑證 → API 金鑰</p>
-                    <p><strong>步驟 4:</strong> 複製 API Key，貼到下方欄位，點擊「載入菜單」</p>
-                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">💡 API Key 會自動儲存在瀏覽器中，下次開啟不用重新輸入</p>
-                </div>
 
-                <div class="controls" style="margin-bottom: 15px;">
-                    <div class="control-group">
-                        <label>Google Drive API Key</label>
-                        <input type="text" id="apiKeyInput" placeholder="貼上您的 API Key" style="width: 400px;">
-                    </div>
-                </div>
-            </div>
 
             <div class="controls">
-                <div class="control-group" id="apiKeyToggleBtn" style="flex: 0 0 auto; display: none;">
-                    <label>&nbsp;</label>
-                    <button onclick="toggleApiKeySection()" style="background: #6c757d; font-size: 0.9em;">🔑
-                        設定金鑰</button>
-                </div>
+
                 <div class="control-group" style="flex: 1 1 100%;">
                     <label>餐別</label>
                     <div class="meal-type-container">
@@ -672,6 +651,7 @@
 
     <script>
         let allMenus = [];
+        const API_KEY = 'AIzaSyDi0x-sEkwbFqwQ9SzLOO-tXxFNN7uqhDU';
         const LUNCH_FOLDER_ID = '1olUeeen0JvMGaVQ7yJ7yLWu6K7m0tx9a';
         const DINNER_FOLDER_ID = '16GoY4m7kegpzAMUMb82NBds8FISt-1zz';
         let currentMealType = 'lunch';
@@ -681,30 +661,10 @@
 
         // Check API Key on load
         window.addEventListener('load', () => {
-            const savedApiKey = localStorage.getItem('googleDriveApiKey');
-            const apiKeySection = document.getElementById('apiKeySection');
-            const apiKeyToggleBtn = document.getElementById('apiKeyToggleBtn');
-
-            if (savedApiKey) {
-                document.getElementById('apiKeyInput').value = savedApiKey;
-                apiKeySection.style.display = 'none';
-                apiKeyToggleBtn.style.display = 'block';
-            } else {
-                apiKeySection.style.display = 'block';
-                apiKeyToggleBtn.style.display = 'none';
-            }
+            loadMenu();
         });
 
-        function toggleApiKeySection() {
-            const section = document.getElementById('apiKeySection');
-            const btn = document.getElementById('apiKeyToggleBtn');
 
-            if (section.style.display === 'none') {
-                section.style.display = 'block';
-            } else {
-                section.style.display = 'none';
-            }
-        }
 
         function setMealType(type) {
             currentMealType = type;
@@ -758,15 +718,7 @@
         }
 
         async function loadMenu() {
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
-
-            if (!apiKey) {
-                showError('請先輸入 Google Drive API Key（參考上方說明取得）');
-                return;
-            }
-
-            // 儲存 API Key 到 localStorage
-            localStorage.setItem('googleDriveApiKey', apiKey);
+            const apiKey = API_KEY;
 
             const container = document.getElementById('menuContainer');
             const errorContainer = document.getElementById('errorContainer');

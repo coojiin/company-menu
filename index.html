@@ -434,7 +434,7 @@
                 </div>
             </div>
 
-            <div class="stats" id="stats" style="display: none;">
+            <div class="stats" id="stats">
                 <div class="stat-card">
                     <div class="number" id="totalMenus">0</div>
                     <div class="label">菜單總數</div>
@@ -732,7 +732,7 @@
             document.getElementById('totalMenus').textContent = allMenus.length;
             document.getElementById('totalRestaurants').textContent = restaurants.size;
             document.getElementById('todayMenus').textContent = allMenus.length; // Same as total
-            document.getElementById('stats').style.display = 'flex';
+        }
         }
 
         function showError(message) {

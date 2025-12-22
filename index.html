@@ -7,212 +7,210 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="每日菜單">
-    <title>公司每日菜單瀏覽器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>🍱 公司每日菜單瀏覽器</title>
     <style>
+        :root {
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            --md-sys-color-secondary: #625B71;
+            --md-sys-color-secondary-container: #E8DEF8;
+            --md-sys-color-surface: #FEF7FF;
+            --md-sys-color-surface-variant: #E7E0EB;
+            --md-sys-color-on-surface: #1D1B20;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-error: #B3261E;
+            --md-sys-typescale-headline-small: 500 24px/32px 'Outfit', sans-serif;
+            --md-sys-typescale-title-large: 400 22px/28px 'Outfit', sans-serif;
+            --md-sys-typescale-label-large: 500 14px/20px 'Outfit', sans-serif;
+            --md-sys-typescale-body-medium: 400 14px/20px 'Outfit', sans-serif;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Microsoft JhengHei', 'PingFang TC', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
             min-height: 100vh;
-            padding: 10px;
+            padding: 16px;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 600px) {
             body {
-                padding: 20px;
+                padding: 24px;
             }
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         header {
-            background: white;
-            padding: 20px 15px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-
-        @media (min-width: 768px) {
-            header {
-                padding: 30px;
-                margin-bottom: 30px;
-            }
+            background: var(--md-sys-color-surface-variant);
+            padding: 24px 20px;
+            border-radius: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
-            color: #333;
-            font-size: 1.5em;
-            margin-bottom: 15px;
+            font: var(--md-sys-typescale-headline-small);
+            color: var(--md-sys-color-primary);
             text-align: center;
-        }
-
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 2.5em;
-                margin-bottom: 20px;
-            }
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
         }
 
         .controls {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-end;
+            gap: 16px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 600px) {
+            .controls {
+                flex-direction: row;
+                align-items: flex-end;
+                flex-wrap: wrap;
+            }
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            flex: 1 1 100%;
-            min-width: 0;
-        }
-
-        @media (min-width: 480px) {
-            .control-group {
-                flex: 1 1 45%;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .controls {
-                gap: 15px;
-            }
-
-            .control-group {
-                flex: 0 1 auto;
-            }
+            gap: 8px;
+            flex: 1;
         }
 
         .control-group label {
-            font-size: 0.85em;
-            color: #666;
-            font-weight: 600;
-        }
-
-        @media (min-width: 768px) {
-            .control-group label {
-                font-size: 0.9em;
-            }
+            font: var(--md-sys-typescale-label-large);
+            color: var(--md-sys-color-outline);
+            margin-left: 4px;
         }
 
         input,
         select,
         button {
-            padding: 10px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.95em;
-            font-family: inherit;
-            width: 100%;
-        }
-
-        @media (min-width: 768px) {
-
-            input,
-            select,
-            button {
-                padding: 12px 20px;
-                font-size: 1em;
-                width: auto;
-            }
+            height: 56px;
+            padding: 0 16px;
+            border-radius: 16px;
+            border: 1px solid var(--md-sys-color-outline);
+            background: transparent;
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-on-surface);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         input:focus,
         select:focus {
             outline: none;
-            border-color: #667eea;
+            border: 2px solid var(--md-sys-color-primary);
+            padding: 0 15px;
         }
 
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
             border: none;
-            cursor: pointer;
             font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.1);
         }
 
         button:active {
-            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            transform: scale(0.98);
         }
 
-        @media (hover: none) {
-            button:hover {
-                transform: none;
-            }
+        button:disabled {
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-outline);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
-            button:active {
-                opacity: 0.8;
-            }
+        .meal-type-container {
+            display: flex;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 28px;
+            padding: 4px;
+            gap: 4px;
+            border: 1px solid var(--md-sys-color-outline);
+        }
+
+        .meal-type-btn {
+            flex: 1;
+            height: 48px;
+            border-radius: 24px;
+            border: none;
+            background: transparent;
+            color: var(--md-sys-color-on-surface);
+            font: var(--md-sys-typescale-label-large);
+            padding: 0;
+            box-shadow: none;
+        }
+
+        .meal-type-btn.active {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .stats {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 24px;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            padding: 16px 8px;
+            border-radius: 24px;
             text-align: center;
-            min-width: 150px;
         }
 
         .stat-card .number {
-            font-size: 2em;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
         }
 
         .stat-card .label {
-            font-size: 0.9em;
-            opacity: 0.9;
+            font: var(--md-sys-typescale-label-large);
+            opacity: 0.8;
         }
 
         .restaurant-section {
-            background: white;
-            padding: 20px 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease-in;
+            background: var(--md-sys-color-surface);
+            border-radius: 28px;
+            margin-bottom: 32px;
+            animation: m3FadeIn 0.4s ease-out;
         }
 
-        @media (min-width: 768px) {
-            .restaurant-section {
-                padding: 25px;
-                margin-bottom: 25px;
-            }
-        }
-
-        @keyframes fadeIn {
+        @keyframes m3FadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(16px);
             }
 
             to {
@@ -225,371 +223,130 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
+            padding: 16px 8px;
+            margin-bottom: 12px;
         }
 
         .restaurant-name {
-            font-size: 1.4em;
-            color: #333;
-            font-weight: bold;
-        }
-
-        @media (min-width: 768px) {
-            .restaurant-name {
-                font-size: 1.8em;
-            }
+            font: var(--md-sys-typescale-title-large);
+            color: var(--md-sys-color-on-surface);
+            font-weight: 600;
         }
 
         .restaurant-count {
-            background: #667eea;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-        }
-
-        @media (min-width: 768px) {
-            .restaurant-count {
-                padding: 8px 15px;
-                font-size: 0.9em;
-            }
+            background: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font: var(--md-sys-typescale-label-large);
         }
 
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-        }
-
-        @media (min-width: 768px) {
-            .menu-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 20px;
-            }
+            gap: 20px;
         }
 
         .menu-card {
-            background: #f8f9fa;
-            border-radius: 12px;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 24px;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            border: 2px solid transparent;
-            -webkit-tap-highlight-color: transparent;
+            border: 1px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
 
         .menu-card:active {
             transform: scale(0.98);
         }
 
-        @media (hover: hover) {
-            .menu-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-                border-color: #667eea;
-            }
-        }
-
         .menu-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            background: #e9ecef;
+            background: var(--md-sys-color-surface-variant);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #adb5bd;
-            font-size: 2.5em;
-        }
-
-        @media (min-width: 768px) {
-            .menu-image {
-                height: 250px;
-                font-size: 3em;
-            }
+            font-size: 3rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .menu-info {
-            padding: 15px;
-        }
-
-        .menu-name {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .menu-price {
-            display: inline-block;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .menu-date {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-top: 8px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
-        .modal.active {
+        .menu-name {
+            font: var(--md-sys-typescale-title-large);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .menu-price {
+            display: inline-flex;
+            align-items: center;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .menu-date {
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-outline);
             display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .modal {
+            background: rgba(29, 27, 32, 0.95);
+            backdrop-filter: blur(4px);
         }
 
         .modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2.5em;
-            color: white;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.5);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-            -webkit-tap-highlight-color: transparent;
-            z-index: 1001;
-        }
-
-        @media (min-width: 768px) {
-            .modal-close {
-                top: 30px;
-                right: 30px;
-                font-size: 3em;
-                width: 60px;
-                height: 60px;
-            }
-        }
-
-        .modal-close:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-close:active {
-            transform: scale(0.9);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
-        }
-
-        .empty-state-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-        }
-
-        .empty-state-text {
-            font-size: 1.3em;
+            border-radius: 24px;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
         }
 
         .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2em;
-            color: #667eea;
+            font: var(--md-sys-typescale-title-large);
+            color: var(--md-sys-color-primary);
+            padding: 64px;
         }
 
         .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #f5c6cb;
+            background: var(--md-sys-color-error);
+            color: white;
+            border-radius: 16px;
         }
 
-        .info-box {
-            background: #d1ecf1;
-            color: #0c5460;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #bee5eb;
-            font-size: 0.9em;
-        }
-
-        @media (min-width: 768px) {
-            .info-box {
-                padding: 20px;
-                margin-bottom: 20px;
-                font-size: 1em;
-            }
-        }
-
-        .info-box h3 {
-            margin-bottom: 8px;
-            font-size: 1.1em;
-        }
-
-        .info-box p {
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-
-        .info-box code {
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Consolas', monospace;
-        }
-
-        #apiKeyInput {
-            max-width: 100%;
-        }
-
-        @media (min-width: 768px) {
-            #apiKeyInput {
-                width: 400px;
-            }
-        }
-
-        /* Desktop Layout (PC) */
         @media (min-width: 1024px) {
             .container {
                 display: grid;
-                grid-template-columns: 300px 1fr;
-                gap: 30px;
+                grid-template-columns: 320px 1fr;
+                gap: 40px;
                 align-items: start;
             }
 
             header {
                 position: sticky;
-                top: 20px;
-                display: flex;
-                flex-direction: column;
-                max-height: calc(100vh - 40px);
-                overflow-y: auto;
-            }
-
-            h1 {
-                font-size: 2em;
-                margin-bottom: 30px;
-            }
-
-            .controls {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .control-group {
-                flex: 1 1 auto;
-                width: 100%;
+                top: 24px;
             }
 
             .stats {
-                flex-direction: column;
-                gap: 15px;
+                grid-template-columns: 1fr;
             }
-
-            .stat-card {
-                padding: 20px;
-            }
-
-            .restaurant-section {
-                padding: 30px;
-            }
-
-            .menu-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-
-            .main-content {
-                min-height: 100vh;
-            }
-        }
-
-        /* New UI Styles */
-        .meal-type-container {
-            display: flex;
-            background: #e9ecef;
-            border-radius: 8px;
-            padding: 4px;
-            gap: 4px;
-            width: 100%;
-        }
-
-        .meal-type-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            color: #666;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            font-size: 1em;
-        }
-
-        .meal-type-btn.active {
-            background: white;
-            color: #667eea;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Optimized Stats Layout */
-        .stats {
-            display: flex;
-            gap: 10px;
-            justify-content: space-between;
-            margin-top: 20px;
-            flex-wrap: nowrap;
-            /* Force single row */
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 12px 5px;
-            border-radius: 10px;
-            text-align: center;
-            flex: 1;
-            /* Distribute space equally */
-            min-width: 0;
-            /* Allow shrinking */
-        }
-
-        .stat-card .number {
-            font-size: 1.5em;
-            font-weight: bold;
-            line-height: 1.2;
-        }
-
-        .stat-card .label {
-            font-size: 0.8em;
-            opacity: 0.9;
         }
     </style>
 </head>
@@ -662,6 +419,14 @@
 
         // Check API Key on load
         window.addEventListener('load', () => {
+            // 自動判斷餐別：14:00 前為午餐，後為晚餐
+            const hour = new Date().getHours();
+            currentMealType = hour < 14 ? 'lunch' : 'dinner';
+
+            // 更新 UI 狀態
+            document.querySelectorAll('.meal-type-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${currentMealType}`).classList.add('active');
+
             loadMenu();
         });
 

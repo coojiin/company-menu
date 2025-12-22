@@ -131,6 +131,8 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-top: 24px;
+            width: 100%;
+            justify-content: center;
         }
 
         .stat-card {
@@ -139,6 +141,10 @@
             padding: 12px 4px;
             border-radius: 20px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .stat-card .number {
@@ -190,7 +196,8 @@
 
         .menu-image {
             width: 100%;
-            height: 200px;
+            height: 300px;
+            /* Increased height */
             object-fit: cover;
             display: flex;
             align-items: center;
@@ -625,7 +632,6 @@
                                     <div class="menu-name">${menu.item}</div>
                                     <div class="menu-price">${menu.priceDisplay}</div>
                                     ${menu.hasMultiplePrices ? '<div style="font-size: 0.85em; color: #6c757d; margin-top: 5px;">多種份量可選</div>' : ''}
-                                    <div class="menu-date">📅 ${menu.dateDisplay}</div>
                                 </div>
                             </div>
                         `).join('')}

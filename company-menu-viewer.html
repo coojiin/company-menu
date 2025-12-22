@@ -531,6 +531,7 @@
         let allMenus = [];
         const API_KEY = '{{GOOGLE_API_KEY}}';
         const FOLDER_ID = '{{LUNCH_FOLDER_ID}}';
+        let isLoaderActive = false;
 
         // 設定今天日期為預設值
         document.getElementById('dateFilter').valueAsDate = new Date();
@@ -577,10 +578,19 @@
         }
 
         async function loadMenu() {
+            if (isLoaderActive) return;
+            isLoaderActive = true;
+
             const apiKey = API_KEY;
 
             const container = document.getElementById('menuContainer');
             const errorContainer = document.getElementById('errorContainer');
+            const loadBtn = document.querySelector('button[onclick="loadMenu()"]');
+
+            if (loadBtn) {
+                loadBtn.disabled = true;
+                loadBtn.style.opacity = '0.7';
+            }
 
             errorContainer.innerHTML = '';
             container.innerHTML = '<div class="loading">⏳ 載入菜單中...</div>';
@@ -649,6 +659,12 @@
             } catch (error) {
                 showError(error.message);
                 container.innerHTML = '';
+            } finally {
+                isLoaderActive = false;
+                if (loadBtn) {
+                    loadBtn.disabled = false;
+                    loadBtn.style.opacity = '1';
+                }
             }
         }
 

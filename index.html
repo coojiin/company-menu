@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://lh3.googleusercontent.com">
     <link rel="preconnect" href="https://www.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>🍱 公司每日菜單瀏覽器</title>
+    <title>公司每日菜單瀏覽器</title>
     <style>
         html {
             scrollbar-gutter: stable;
@@ -525,7 +525,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🍱 公司每日菜單瀏覽器</h1>
+            <h1>公司每日菜單瀏覽器</h1>
 
 
 
@@ -551,7 +551,7 @@
                 <div class="control-group">
                     <!-- <label>&nbsp;</label> Removed to reduce vertical space -->
                     <button class="action-btn" onclick="loadMenu()">
-                        <span>🔄</span> 載入菜單
+                        載入菜單
                     </button>
                 </div>
             </div>
@@ -703,7 +703,8 @@
                 const folderId = currentMealType === 'dinner' ? DINNER_FOLDER_ID : LUNCH_FOLDER_ID;
 
                 const response = await fetch(
-                    `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${apiKey}&fields=files(id,name,mimeType,thumbnailLink,webContentLink)&pageSize=1000`
+                    `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${apiKey}&fields=files(id,name,mimeType,thumbnailLink,webContentLink)&pageSize=1000`,
+                    { cache: 'no-store' }
                 );
 
                 if (!response.ok) {
@@ -722,6 +723,7 @@
                             <div class="empty-state-text">資料夾中沒有找到任何檔案</div>
                         </div>
                     `;
+                    updateRestaurantFilter(); // Ensure filters are cleared
                     updateStats(); // Reset stats when no files are found
                     return;
                 }
@@ -750,6 +752,7 @@
                              <div class="empty-state-text">找不到符合命名格式的菜單圖片<br><small>檔名格式應為：MMDD餐廳名稱價格元菜單品項.jpg</small></div>
                         </div>
                     `;
+                    updateRestaurantFilter(); // Ensure filters are cleared
                     return;
                 }
 

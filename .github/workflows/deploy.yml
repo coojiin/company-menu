@@ -20,9 +20,7 @@ jobs:
           sed -i "s/{{GOOGLE_API_KEY}}/${{ secrets.GOOGLE_API_KEY }}/g" index.html
           sed -i "s/{{LUNCH_FOLDER_ID}}/${{ secrets.LUNCH_FOLDER_ID }}/g" index.html
           sed -i "s/{{DINNER_FOLDER_ID}}/${{ secrets.DINNER_FOLDER_ID }}/g" index.html
-          sed -i "s/{{GOOGLE_API_KEY}}/${{ secrets.GOOGLE_API_KEY }}/g" company-menu-viewer.html
-          sed -i "s/{{LUNCH_FOLDER_ID}}/${{ secrets.LUNCH_FOLDER_ID }}/g" company-menu-viewer.html
-          sed -i "s/{{DINNER_FOLDER_ID}}/${{ secrets.DINNER_FOLDER_ID }}/g" company-menu-viewer.html
+
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

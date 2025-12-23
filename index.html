@@ -748,7 +748,7 @@
                                 id: file.id,
                                 thumbnailLink: file.thumbnailLink,
                                 webContentLink: file.webContentLink,
-                                imageUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`
+                                imageUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w800`
                             };
                         }
                         return null;
@@ -911,8 +911,8 @@
                     // innerHTML on a specifically created element is reasonably fast)
                     card.innerHTML = `
                         <div class="menu-image">
-                           <img src="${menu.thumbnailLink}" 
-                                alt="${menu.item}" 
+                           <img src="${menu.imageUrl}" 
+                                alt="${menu.item}"  
                                 loading="lazy" 
                                 decoding="async"
                                 onload="this.style.opacity=1"

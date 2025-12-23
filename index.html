@@ -159,28 +159,15 @@
             box-shadow: 0 0 0 3px rgba(243, 114, 44, 0.1);
         }
 
-        /* Filter Chips Styles */
         .filter-container {
             width: 100%;
-            overflow-x: auto;
-            padding-bottom: 4px;
             margin-bottom: 8px;
-            -webkit-overflow-scrolling: touch;
-            /* Smooth scroll on iOS */
-            scrollbar-width: none;
-            /* Firefox */
-        }
-
-        .filter-container::-webkit-scrollbar {
-            display: none;
-            /* Chrome/Safari */
         }
 
         .filter-chips {
             display: flex;
-            gap: 12px;
-            min-width: min-content;
-            /* Ensure children don't wrap */
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .filter-chip {
@@ -523,23 +510,12 @@
                     width: 100%;
                     margin-bottom: 0;
                 }
-
-                /* Make filter chips wrap on desktop for better mouse usage */
-                .filter-container {
-                    overflow-x: visible;
-                    white-space: normal;
-                }
-
-                .filter-chips {
-                    flex-wrap: wrap;
-                    gap: 8px;
-                    /* Slightly tighter gap for wrapped view */
-                }
-
-                .stats {
-                    grid-template-columns: 1fr;
-                }
             }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 

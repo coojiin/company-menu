@@ -756,9 +756,8 @@
                             return {
                                 ...parsed,
                                 id: file.id,
-                                thumbnailLink: file.thumbnailLink,
-                                webContentLink: file.webContentLink,
-                                imageUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w800`
+                                thumbnailUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`, // Grid view
+                                largeImageUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w800` // Modal view
                             };
                         }
                         return null;
@@ -780,7 +779,7 @@
                 // 更新餐廳篩選選項
                 updateRestaurantFilter();
 
-                // 顯示菜單
+                // 顯示菜單 (Render ALL once, then filter visibility)
                 displayMenus();
 
                 // 更新統計
@@ -842,48 +841,41 @@
                 }
             });
 
-            displayMenus();
+            // Optimisation: Don't re-render DOM, just toggle visibility
+            // This prevents images from reloading
+            applyFilterVisibility();
+        }
+
+        function applyFilterVisibility() {
+            const sections = document.querySelectorAll('.restaurant-section');
+            let hasVisible = false;
+
+            sections.forEach(section => {
+                const sectionRestaurant = section.getAttribute('data-restaurant');
+                // If filter is empty OR matches section
+                if (!currentRestaurantFilter || sectionRestaurant === currentRestaurantFilter) {
+                    section.style.display = 'block';
+                    hasVisible = true;
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+
+            // Handle empty state visual if needed (though unlikely here as filter comes from existing data)
+            const container = document.getElementById('menuContainer');
+            // If we needed an empty state for filtering, we'd toggle it here.
         }
 
         function displayMenus() {
-            // Performance: Cache DOM lookups? (Not strictly necessary here as function is not called in a tight loop, 
-            // but good practice if called frequently. Getting by ID is very fast though.)
-
-            // const dateFilter = document.getElementById('dateFilter').value; // Removed in previous steps as UI element is gone or unused? 
-            // Checking logic: The original code referenced 'dateFilter' but I don't see it in the HTML controls in previous views.
-            // Wait, there is no dateFilter input in the HTML anymore? 
-            // Ah, looking at lines 525+, there is NO date input. It was likely removed or I am misremembering.
-            // Let's check line 589 comment "Removed as source is today only".
-            // So `dateFilter` check is likely redundant or broken if element doesn't exist.
-            // Let's assume we filter only by restaurant now.
-
-            let filteredMenus = allMenus;
-
-            // Date filtering removed as source is guaranteed to be today
-            /*
-            if (dateFilter) {
-                filteredMenus = filteredMenus.filter(m => m.date === dateFilter);
-            }
-            */
-
-            if (currentRestaurantFilter) {
-                filteredMenus = filteredMenus.filter(m => m.restaurant === currentRestaurantFilter);
-            }
+            // Performance: 
+            // 1. Render ALL menus grouped by restaurant.
+            // 2. Add 'data-restaurant' to sections.
+            // 3. Filter only toggles visibility.
 
             const container = document.getElementById('menuContainer');
 
-            if (filteredMenus.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🔍</div>
-                        <div class="empty-state-text">沒有符合篩選條件的菜單</div>
-                    </div>
-                `;
-                return;
-            }
-
             // Perform grouping (Efficient reduce)
-            const groupedMenus = filteredMenus.reduce((acc, menu) => {
+            const groupedMenus = allMenus.reduce((acc, menu) => {
                 (acc[menu.restaurant] = acc[menu.restaurant] || []).push(menu);
                 return acc;
             }, {});
@@ -897,6 +889,7 @@
                 // Construct Section
                 const section = document.createElement('div');
                 section.className = 'restaurant-section';
+                section.setAttribute('data-restaurant', restaurant); // For filtering
 
                 // Section Header
                 const header = document.createElement('div');
@@ -915,13 +908,14 @@
                 menus.forEach(menu => {
                     const card = document.createElement('button'); // Use button for accessibility/keyboard interaction
                     card.className = 'menu-card';
-                    card.onclick = () => openModal(menu.imageUrl);
+                    // Pass largeImageUrl for Modal
+                    card.onclick = () => openModal(menu.largeImageUrl);
 
                     // Construct Card Content (Template Literal is fine here for readibility, 
                     // innerHTML on a specifically created element is reasonably fast)
                     card.innerHTML = `
                         <div class="menu-image">
-                           <img src="${menu.imageUrl}" 
+                           <img src="${menu.thumbnailUrl}" 
                                 alt="${menu.item}"  
                                 loading="lazy" 
                                 decoding="async"
@@ -942,6 +936,9 @@
 
             container.innerHTML = '';
             container.appendChild(fragment);
+
+            // Apply initial filter state (usually 'All' on load)
+            applyFilterVisibility();
         }
 
         function updateStats() {

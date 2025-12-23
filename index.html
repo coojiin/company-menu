@@ -514,22 +514,32 @@
                 flex-direction: column;
                 align-items: stretch;
                 flex-wrap: nowrap;
+
                 /* Prevent wrap issues in column mode */
-                width: 100%;
-            }
+                /* Reset control group flex behavior for vertical stack */
+                .control-group {
+                    flex: 0 0 auto !important;
+                    /* Override inline styles */
+                    width: 100%;
+                    margin-bottom: 0;
+                }
 
-            /* Reset control group flex behavior for vertical stack */
-            .control-group {
-                flex: 0 0 auto !important;
-                /* Override inline styles */
-                width: 100%;
-                margin-bottom: 0;
-            }
+                /* Make filter chips wrap on desktop for better mouse usage */
+                .filter-container {
+                    overflow-x: visible;
+                    white-space: normal;
+                }
 
-            .stats {
-                grid-template-columns: 1fr;
+                .filter-chips {
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    /* Slightly tighter gap for wrapped view */
+                }
+
+                .stats {
+                    grid-template-columns: 1fr;
+                }
             }
-        }
     </style>
 </head>
 

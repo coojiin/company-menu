@@ -504,12 +504,26 @@
             header {
                 position: sticky;
                 top: 32px;
+                /* Ensure header respects grid width and doesn't expand */
+                width: 100%;
+                max-width: 100%;
             }
 
             /* In sidebar layout, stack controls vertically again for better fit */
             .controls {
                 flex-direction: column;
                 align-items: stretch;
+                flex-wrap: nowrap;
+                /* Prevent wrap issues in column mode */
+                width: 100%;
+            }
+
+            /* Reset control group flex behavior for vertical stack */
+            .control-group {
+                flex: 0 0 auto !important;
+                /* Override inline styles */
+                width: 100%;
+                margin-bottom: 0;
             }
 
             .stats {

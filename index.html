@@ -223,6 +223,10 @@
             justify-content: center;
             gap: 8px;
             font-size: 16px;
+            padding: 0 16px;
+            /* Ensure lateral padding */
+            line-height: normal;
+            /* Reset line height */
         }
 
         button.action-btn:hover {
@@ -911,6 +915,9 @@
                 section.appendChild(grid);
                 fragment.appendChild(section);
             });
+
+            container.innerHTML = '';
+            container.appendChild(fragment);
         }
 
         function updateStats() {

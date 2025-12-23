@@ -85,7 +85,8 @@
 
         header {
             background: var(--surface-color);
-            padding: 32px 24px;
+            padding: 24px 20px;
+            /* Reduced padding from 32px 24px */
             border-radius: var(--border-radius-xl);
             margin-bottom: 24px;
             box-shadow: var(--shadow-sm);
@@ -105,17 +106,20 @@
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 24px;
+            /* Reduced from 28px */
             font-weight: 700;
             color: var(--text-primary);
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 20px;
+            /* Reduced from 32px */
             letter-spacing: -0.5px;
         }
 
         .controls {
             display: flex;
-            gap: 16px;
+            gap: 12px;
+            /* Reduced from 16px */
             flex-direction: column;
         }
 
@@ -130,7 +134,8 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
+            /* Reduced from 8px */
             flex: 1;
         }
 
@@ -138,6 +143,8 @@
             font: var(--md-sys-typescale-label-large);
             color: var(--md-sys-color-outline);
             margin-left: 4px;
+            font-size: 13px;
+            /* Slightly smaller label */
         }
 
         input {
@@ -151,17 +158,13 @@
             font-family: var(--font-family);
             transition: all 0.2s ease;
             width: 100%;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--secondary-color);
             box-shadow: 0 0 0 3px rgba(243, 114, 44, 0.1);
         }
 
         .filter-container {
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            /* Reduced from 8px */
         }
 
         .filter-chips {
@@ -546,7 +549,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>&nbsp;</label>
+                    <!-- <label>&nbsp;</label> Removed to reduce vertical space -->
                     <button class="action-btn" onclick="loadMenu()">
                         <span>🔄</span> 載入菜單
                     </button>

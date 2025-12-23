@@ -415,6 +415,30 @@
             transform: scale(0.9);
         }
 
+        @media (min-width: 1024px) {
+            .container {
+                display: grid;
+                grid-template-columns: 360px 1fr;
+                gap: 48px;
+                align-items: start;
+            }
+
+            header {
+                position: sticky;
+                top: 32px;
+            }
+
+            /* In sidebar layout, stack controls vertically again for better fit */
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -621,6 +645,31 @@
 
             errorContainer.innerHTML = '';
             container.innerHTML = '<div class="loading">⏳ 載入菜單中...</div>';
+
+            // --- Caching Logic Start ---
+            const todayStr = new Date().toISOString().split('T')[0];
+            const cacheKey = `company_menu_data_${todayStr}_${currentMealType}`;
+            const cachedData = sessionStorage.getItem(cacheKey);
+
+            if (cachedData) {
+                console.log('Serving from cache');
+                try {
+                    allMenus = JSON.parse(cachedData);
+                    updateRestaurantFilter();
+                    displayMenus();
+                    updateStats();
+                    isLoaderActive = false;
+                    if (loadBtn) {
+                        loadBtn.disabled = false;
+                        loadBtn.style.opacity = '1';
+                    }
+                    return; // Exit early
+                } catch (e) {
+                    console.warn('Cache parse error', e);
+                    sessionStorage.removeItem(cacheKey);
+                }
+            }
+            // --- Caching Logic End ---
 
             try {
                 const response = await fetch(

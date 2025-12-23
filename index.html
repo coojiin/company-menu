@@ -493,7 +493,6 @@
             .container {
                 display: grid;
                 grid-template-columns: 360px 1fr;
-                /* Adjusted for better split */
                 gap: 48px;
                 align-items: start;
             }
@@ -501,6 +500,12 @@
             header {
                 position: sticky;
                 top: 32px;
+            }
+
+            /* In sidebar layout, stack controls vertically again for better fit */
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .stats {

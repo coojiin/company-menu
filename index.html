@@ -8,7 +8,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="每日菜單">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://lh3.googleusercontent.com">
+    <link rel="preconnect" href="https://www.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>🍱 公司每日菜單瀏覽器</title>
     <style>
@@ -645,25 +650,58 @@
 
         async function loadMenu() {
             if (isLoaderActive) return;
+
+            const apiKey = '{{GOOGLE_API_KEY}}'; // Will be replaced by GitHub Actions
+            if (apiKey.includes('{{')) {
+                // Determine if we are on localhost to skip this check or show a clearer message
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.warn('Local development: API Key placeholder detected.');
+                } else {
+                    showError('API Key尚未設定。請確認GitHub Actions部署流程。');
+                    return;
+                }
+            }
+
             isLoaderActive = true;
-
-            const apiKey = API_KEY;
-
-            const container = document.getElementById('menuContainer');
-            const errorContainer = document.getElementById('errorContainer');
             const loadBtn = document.querySelector('button[onclick="loadMenu()"]');
-
             if (loadBtn) {
                 loadBtn.disabled = true;
                 loadBtn.style.opacity = '0.7';
             }
 
-            errorContainer.innerHTML = '';
-            container.innerHTML = '<div class="loading">⏳ 載入菜單中...</div>';
+            const container = document.getElementById('menuContainer');
+            const errorContainer = document.getElementById('errorContainer');
 
+            // Show loading state
+            container.innerHTML = '<div class="loading">載入美味菜單中...🍱</div>';
+            errorContainer.innerHTML = '';
+
+            // --- Caching Logic Start ---
+            const todayStr = new Date().toISOString().split('T')[0];
+            const cacheKey = `company_menu_data_${todayStr}_${currentMealType}`;
+            const cachedData = sessionStorage.getItem(cacheKey);
+
+            if (cachedData) {
+                console.log('Serving from cache');
+                try {
+                    allMenus = JSON.parse(cachedData);
+                    updateRestaurantFilter();
+                    displayMenus();
+                    updateStats();
+                    isLoaderActive = false;
+                    if (loadBtn) {
+                        loadBtn.disabled = false;
+                        loadBtn.style.opacity = '1';
+                    }
+                    return; // Exit early
+                } catch (e) {
+                    console.warn('Cache parse error', e);
+                    sessionStorage.removeItem(cacheKey);
+                }
+            }
+            // --- Caching Logic End ---
             // Reset state explicitly
             allMenus = [];
-            updateStats();
 
             try {
                 // const mealType = document.getElementById('mealTypeFilter').value; // Removed
@@ -715,10 +753,17 @@
                     container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-state-icon">🔍</div>
-                            <div class="empty-state-text">找不到符合命名格式的菜單圖片<br><small>檔名格式應為：MMDD餐廳名稱價格元菜單品項.jpg</small></div>
+                             <div class="empty-state-text">找不到符合命名格式的菜單圖片<br><small>檔名格式應為：MMDD餐廳名稱價格元菜單品項.jpg</small></div>
                         </div>
                     `;
                     return;
+                }
+
+                // Cache the successful result
+                try {
+                    sessionStorage.setItem(cacheKey, JSON.stringify(allMenus));
+                } catch (e) {
+                    console.warn('Storage quota exceeded', e);
                 }
 
                 // 更新餐廳篩選選項
@@ -827,10 +872,12 @@
                     </div>
                     <div class="menu-grid">
                         ${menus.map(menu => `
-                            <div class="menu-card">
+                            <div class="menu-card" onclick="openModal('${menu.imageUrl.replace('w400', 's1200')}')">
                                 <img src="${menu.imageUrl}" 
                                      alt="${menu.item}" 
                                      class="menu-image"
+                                     loading="lazy"
+                                     decoding="async"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="menu-image" style="display:none;">🍱</div>
                                 <div class="menu-info">

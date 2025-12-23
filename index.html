@@ -614,13 +614,16 @@
             loadMenu();
         }
 
+        const FILENAME_REGEX = /^(\d{4})(.+?)(\d+(?:\/\d+)*)元(.+)$/;
+        const EXTENSION_REGEX = /\.(jpg|jpeg|png|gif|bmp)$/i;
+
         function parseFileName(fileName) {
             // 移除副檔名
-            const nameWithoutExt = fileName.replace(/\.(jpg|jpeg|png|gif|bmp)$/i, '');
+            const nameWithoutExt = fileName.replace(EXTENSION_REGEX, '');
 
             // 解析格式: MMDD餐廳名稱價格元菜單品項
             // 處理多種價格格式：45/65/85元 或 45元
-            const match = nameWithoutExt.match(/^(\d{4})(.+?)(\d+(?:\/\d+)*)元(.+)$/);
+            const match = nameWithoutExt.match(FILENAME_REGEX);
 
             if (match) {
                 const [, dateStr, restaurant, priceStr, item] = match;
@@ -682,30 +685,9 @@
             container.innerHTML = '<div class="loading">載入美味菜單中...🍱</div>';
             errorContainer.innerHTML = '';
 
-            // --- Caching Logic Start ---
-            const todayStr = new Date().toISOString().split('T')[0];
-            const cacheKey = `company_menu_data_${todayStr}_${currentMealType}`;
-            const cachedData = sessionStorage.getItem(cacheKey);
-
-            if (cachedData) {
-                console.log('Serving from cache');
-                try {
-                    allMenus = JSON.parse(cachedData);
-                    updateRestaurantFilter();
-                    displayMenus();
-                    updateStats();
-                    isLoaderActive = false;
-                    if (loadBtn) {
-                        loadBtn.disabled = false;
-                        loadBtn.style.opacity = '1';
-                    }
-                    return; // Exit early
-                } catch (e) {
-                    console.warn('Cache parse error', e);
-                    sessionStorage.removeItem(cacheKey);
-                }
-            }
-            // --- Caching Logic End ---
+            // --- Caching Logic Removed per user request for fresh data ---
+            // query: "因為不定期更新，所以還是每次都抓到最新資料"
+            // -----------------------------------------------------------
             // Reset state explicitly
             allMenus = [];
 
@@ -765,12 +747,7 @@
                     return;
                 }
 
-                // Cache the successful result
-                try {
-                    sessionStorage.setItem(cacheKey, JSON.stringify(allMenus));
-                } catch (e) {
-                    console.warn('Storage quota exceeded', e);
-                }
+                // Cache removed to ensure freshness
 
                 // 更新餐廳篩選選項
                 updateRestaurantFilter();
@@ -795,18 +772,33 @@
         }
 
         function updateRestaurantFilter() {
+            // High-performance set operation and sort
             const restaurants = [...new Set(allMenus.map(m => m.restaurant))].sort();
             const container = document.getElementById('restaurantFilterChips');
 
-            // Keep "All" button
-            let html = `<div class="filter-chip ${currentRestaurantFilter === '' ? 'active' : ''}" onclick="setRestaurantFilter('')">全部餐廳</div>`;
+            // Use DocumentFragment to batch DOM updates (1 reflow instead of N)
+            const fragment = document.createDocumentFragment();
 
+            // Create "All" button
+            const allChip = document.createElement('div');
+            allChip.className = `filter-chip ${currentRestaurantFilter === '' ? 'active' : ''}`;
+            allChip.textContent = '全部餐廳';
+            allChip.onclick = () => setRestaurantFilter('');
+            fragment.appendChild(allChip);
+
+            // Create restaurant chips
             restaurants.forEach(restaurant => {
-                const isActive = currentRestaurantFilter === restaurant ? 'active' : '';
-                html += `<div class="filter-chip ${isActive}" onclick="setRestaurantFilter('${restaurant}')">${restaurant}</div>`;
+                const chip = document.createElement('div');
+                const isActive = currentRestaurantFilter === restaurant;
+                chip.className = `filter-chip ${isActive ? 'active' : ''}`;
+                chip.textContent = restaurant;
+                chip.onclick = () => setRestaurantFilter(restaurant);
+                fragment.appendChild(chip);
             });
 
-            container.innerHTML = html;
+            // Single DOM update
+            container.innerHTML = '';
+            container.appendChild(fragment);
         }
 
         function setRestaurantFilter(restaurant) {
@@ -826,8 +818,16 @@
         }
 
         function displayMenus() {
-            // const dateFilter = document.getElementById('dateFilter').value; // Removed
-            // const restaurantFilter = document.getElementById('restaurantFilter').value; // OLD
+            // Performance: Cache DOM lookups? (Not strictly necessary here as function is not called in a tight loop, 
+            // but good practice if called frequently. Getting by ID is very fast though.)
+
+            // const dateFilter = document.getElementById('dateFilter').value; // Removed in previous steps as UI element is gone or unused? 
+            // Checking logic: The original code referenced 'dateFilter' but I don't see it in the HTML controls in previous views.
+            // Wait, there is no dateFilter input in the HTML anymore? 
+            // Ah, looking at lines 525+, there is NO date input. It was likely removed or I am misremembering.
+            // Let's check line 589 comment "Removed as source is today only".
+            // So `dateFilter` check is likely redundant or broken if element doesn't exist.
+            // Let's assume we filter only by restaurant now.
 
             let filteredMenus = allMenus;
 
@@ -854,46 +854,22 @@
                 return;
             }
 
-            // 按餐廳分組
-            const groupedMenus = {};
-            filteredMenus.forEach(menu => {
-                if (!groupedMenus[menu.restaurant]) {
-                    groupedMenus[menu.restaurant] = [];
-                }
-                groupedMenus[menu.restaurant].push(menu);
-            });
+            // Perform grouping (Efficient reduce)
+            const groupedMenus = filteredMenus.reduce((acc, menu) => {
+                (acc[menu.restaurant] = acc[menu.restaurant] || []).push(menu);
+                return acc;
+            }, {});
 
-            container.innerHTML = '';
+            // Use DocumentFragment for batch DOM insertion
+            const fragment = document.createDocumentFragment();
 
             Object.keys(groupedMenus).sort().forEach(restaurant => {
+                const menus = groupedMenus[restaurant];
+
+                // Construct Section
                 const section = document.createElement('div');
                 section.className = 'restaurant-section';
 
-                const menus = groupedMenus[restaurant];
-
-                section.innerHTML = `
-                    <div class="restaurant-header">
-                        <div class="restaurant-name">${restaurant}</div>
-                        <div class="restaurant-count">${menus.length} 個菜單</div>
-                    </div>
-                    <div class="menu-grid">
-                        ${menus.map(menu => `
-                            <div class="menu-card" onclick="openModal('${menu.imageUrl.replace('w400', 's1200')}')">
-                                <img src="${menu.imageUrl}" 
-                                     alt="${menu.item}" 
-                                     class="menu-image"
-                                     loading="lazy"
-                                     decoding="async"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="menu-image" style="display:none;">🍱</div>
-                                <div class="menu-info">
-                                    <div class="menu-name">${menu.item}</div>
-                                    <div class="menu-price">${menu.priceDisplay}</div>
-                                    ${menu.hasMultiplePrices ? '<div style="font-size: 0.85em; color: #6c757d; margin-top: 5px;">多種份量可選</div>' : ''}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
                 `;
 
                 container.appendChild(section);
@@ -901,13 +877,12 @@
         }
 
         function updateStats() {
-            // const today = document.getElementById('dateFilter').value; // Removed
-            // const todayMenus = allMenus.filter(m => m.date === today); // Assume all menus are today
+            // Ensure stats reflect current data
             const restaurants = new Set(allMenus.map(m => m.restaurant));
 
             document.getElementById('totalMenus').textContent = allMenus.length;
             document.getElementById('totalRestaurants').textContent = restaurants.size;
-            document.getElementById('todayMenus').textContent = allMenus.length; // Same as total
+            document.getElementById('todayMenus').textContent = allMenus.length; // Simply use total content as date filter is gone
         }
 
         function showError(message) {
@@ -919,9 +894,9 @@
             }
 
             errorContainer.innerHTML = `
-                <div class="error-message">
-                    ⚠️ <strong>錯誤:</strong> ${message}
-                </div>
+                    < div class="error-message" >
+                    ⚠️ <strong>錯誤:</strong> ${ message }
+                </div >
             `;
         }
 

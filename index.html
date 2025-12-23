@@ -17,26 +17,37 @@
         }
 
         :root {
-            --md-sys-color-primary: #6750A4;
-            --md-sys-color-on-primary: #FFFFFF;
-            --md-sys-color-primary-container: #EADDFF;
-            --md-sys-color-on-primary-container: #21005D;
-            --md-sys-color-secondary: #625B71;
-            --md-sys-color-secondary-container: #E8DEF8;
-            --md-sys-color-surface: #FEF7FF;
-            --md-sys-color-surface-variant: #E7E0EB;
-            --md-sys-color-on-surface: #1D1B20;
-            --md-sys-color-outline: #79747E;
-            --md-sys-color-error: #B3261E;
+            /* Modern Gourmet Brand Colors */
+            --primary-color: #F94144;
+            /* Appetizing Red */
+            --primary-hover: #D90429;
+            --secondary-color: #F3722C;
+            /* Warm Orange */
+            --background-color: #F8F9FA;
+            /* Neutral Warm Gray */
+            --surface-color: #FFFFFF;
+            /* Pure White */
+            --surface-variant: #FFF5F2;
+            /* Very light warm tint */
 
-            /* Golden Ratio Scale (Base 16px) */
-            --spacing-unit: 8px;
-            --ratio: 1.618;
+            /* Text Colors */
+            --text-primary: #2B2D42;
+            /* Deep Blue-Gray for better readability */
+            --text-secondary: #6C757D;
+            --text-light: #FFFFFF;
 
-            --md-sys-typescale-headline-small: 600 26px/32px 'Outfit', sans-serif;
-            --md-sys-typescale-title-large: 500 20px/28px 'Outfit', sans-serif;
-            --md-sys-typescale-label-large: 600 14px/20px 'Outfit', sans-serif;
-            --md-sys-typescale-body-medium: 400 15px/22px 'Outfit', sans-serif;
+            /* Shapes */
+            --border-radius-xl: 28px;
+            --border-radius-lg: 20px;
+            --border-radius-md: 12px;
+
+            /* Shadows for Depth */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.1);
+
+            /* Typography (Outfit) */
+            --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         * {
@@ -47,9 +58,9 @@
         }
 
         body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--md-sys-color-surface);
-            color: var(--md-sys-color-on-surface);
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-primary);
             min-height: 100vh;
             padding: 16px;
             -webkit-font-smoothing: antialiased;
@@ -68,19 +79,33 @@
         }
 
         header {
-            background: var(--md-sys-color-surface-variant);
-            padding: 24px 20px;
-            border-radius: 28px;
+            background: var(--surface-color);
+            padding: 32px 24px;
+            border-radius: var(--border-radius-xl);
             margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative top bar */
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         }
 
         h1 {
-            font: var(--md-sys-typescale-headline-small);
-            color: var(--md-sys-color-primary);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
             text-align: center;
-            margin-bottom: 24px;
-            letter-spacing: 0.5px;
+            margin-bottom: 32px;
+            letter-spacing: -0.5px;
         }
 
         .controls {
@@ -110,79 +135,135 @@
             margin-left: 4px;
         }
 
-        input,
-        select,
-        button {
-            height: 56px;
-            padding: 0 16px;
-            border-radius: 16px;
-            border: 1px solid var(--md-sys-color-outline);
-            background: transparent;
-            font: var(--md-sys-typescale-body-medium);
-            color: var(--md-sys-color-on-surface);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        input {
+            height: 52px;
+            padding: 0 20px;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid #E9ECEF;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: var(--font-family);
+            transition: all 0.2s ease;
             width: 100%;
-            /* Ensure full width to prevent jumping */
         }
 
-        input:focus,
-        select:focus {
+        input:focus {
             outline: none;
-            border: 2px solid var(--md-sys-color-primary);
-            padding: 0 15px;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(243, 114, 44, 0.1);
         }
 
-        button {
-            background-color: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
+        /* Filter Chips Styles */
+        .filter-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scroll on iOS */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .filter-container::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 12px;
+            min-width: min-content;
+            /* Ensure children don't wrap */
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            border-radius: 100px;
+            background: var(--surface-color);
+            border: 1px solid #E9ECEF;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .filter-chip:hover {
+            background: #F1F3F5;
+        }
+
+        .filter-chip.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(243, 114, 44, 0.2);
+        }
+
+        button.action-btn {
+            height: 52px;
+            background: var(--primary-color);
+            color: var(--text-light);
             border: none;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(249, 65, 68, 0.2);
+            border-radius: var(--border-radius-lg);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
         }
 
-        button:hover {
-            box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
-            filter: brightness(1.1);
+        button.action-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(249, 65, 68, 0.3);
         }
 
-        button:active {
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            transform: scale(0.98);
+        button.action-btn:active {
+            transform: translateY(0);
         }
 
-        button:disabled {
-            background-color: var(--md-sys-color-surface-variant);
-            color: var(--md-sys-color-outline);
+        button.action-btn:disabled {
+            background-color: #E9ECEF;
+            color: #ADB5BD;
             box-shadow: none;
             cursor: not-allowed;
+            transform: none;
         }
 
         .meal-type-container {
             display: flex;
-            background: var(--md-sys-color-surface-variant);
-            border-radius: 28px;
-            padding: 4px;
-            gap: 4px;
-            border: 1px solid var(--md-sys-color-outline);
+            border-radius: var(--border-radius-xl);
+            padding: 6px;
+            gap: 0;
+            border: none;
         }
 
         .meal-type-btn {
             flex: 1;
-            height: 48px;
-            border-radius: 24px;
+            height: 40px;
+            border-radius: var(--border-radius-lg);
             border: none;
             background: transparent;
-            color: var(--md-sys-color-on-surface);
-            font: var(--md-sys-typescale-label-large);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
             padding: 0;
             box-shadow: none;
+            transition: all 0.2s ease;
         }
 
         .meal-type-btn.active {
-            background-color: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-on-primary-container);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background-color: var(--surface-color);
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .stats {
@@ -195,37 +276,42 @@
         }
 
         .stat-card {
-            background: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-on-primary-container);
+            background: var(--surface-variant);
+            /* Warm tint for stats */
+            color: var(--primary-color);
             padding: 16px 8px;
-            border-radius: 24px;
+            border-radius: var(--border-radius-lg);
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            border: 1px solid rgba(249, 65, 68, 0.1);
         }
 
         .stat-card .number {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
             line-height: 1.2;
+            color: var(--secondary-color);
         }
 
         .stat-card .label {
-            font: var(--md-sys-typescale-label-large);
-            opacity: 0.8;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
+        /* Restaurant Section Styling */
         .restaurant-section {
-            background: var(--md-sys-color-surface);
-            border-radius: 28px;
-            margin-bottom: 32px;
-            padding: 12px;
-            /* Added internal padding for better grouping */
-            border: 1px solid var(--md-sys-color-outline-variant);
-            /* Added subtle border */
-            animation: m3FadeIn 0.4s ease-out;
+            background: transparent;
+            /* Remove background box */
+            border-radius: 0;
+            margin-bottom: 48px;
+            padding: 0;
+            border: none;
+            animation: m3FadeIn 0.5s ease-out;
         }
 
         @keyframes m3FadeIn {
@@ -244,86 +330,92 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
-            margin-bottom: 16px;
+            padding: 0 0 16px 0;
+            margin-bottom: 0px;
+            border-bottom: 2px solid #E9ECEF;
         }
 
         .restaurant-name {
-            font: var(--md-sys-typescale-title-large);
-            color: var(--md-sys-color-on-surface);
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
         .restaurant-count {
-            background: var(--md-sys-color-secondary-container);
-            color: var(--md-sys-color-on-secondary-container);
+            background: var(--text-primary);
+            color: var(--surface-color);
             padding: 4px 12px;
-            border-radius: 8px;
-            font: var(--md-sys-typescale-label-large);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
         }
 
         .menu-card {
-            background: var(--md-sys-color-surface-variant);
-            border-radius: 24px;
+            background: var(--surface-color);
+            border-radius: var(--border-radius-lg);
             overflow: hidden;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
-            border: 1px solid transparent;
+            border: none;
+            box-shadow: var(--shadow-sm);
         }
 
         .menu-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .menu-card:active {
-            transform: scale(0.98);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-md);
         }
 
         .menu-image {
             width: 100%;
-            aspect-ratio: 1.618 / 1;
-            /* Golden Ratio Aspect Ratio */
+            aspect-ratio: 4/3;
+            /* Traditional photo ratio, better for food */
             object-fit: cover;
-            background: var(--md-sys-color-surface-variant);
+            background: #E9ECEF;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.5s ease;
+        }
+
+        .menu-card:hover .menu-image {
+            transform: scale(1.05);
+            /* Zoom effect */
         }
 
         .menu-info {
-            padding: 12px 16px;
-            /* Reduced from 20px */
+            padding: 16px 20px;
         }
 
         .menu-name {
-            font: var(--md-sys-typescale-title-large);
-            margin-bottom: 4px;
-            /* Reduced from 8px */
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            line-height: 1.4;
         }
 
         .menu-price {
             display: inline-flex;
             align-items: center;
-            background: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
-            padding: 6px 16px;
+            background: var(--surface-variant);
+            color: var(--primary-color);
+            padding: 6px 14px;
             border-radius: 12px;
             font-weight: 700;
-            margin-bottom: 4px;
-            /* Reduced from 12px */
+            font-size: 16px;
+            margin-bottom: 0;
         }
 
         .menu-date {
@@ -430,13 +522,19 @@
                 </div>
                 <div class="control-group">
                     <label>餐廳篩選</label>
-                    <select id="restaurantFilter">
-                        <option value="">全部餐廳</option>
-                    </select>
+                    <!-- Horizontal Chips Container -->
+                    <div class="filter-container">
+                        <div class="filter-chips" id="restaurantFilterChips">
+                            <div class="filter-chip active" data-value="">全部餐廳</div>
+                            <!-- Chips will be injected here -->
+                        </div>
+                    </div>
                 </div>
                 <div class="control-group">
                     <label>&nbsp;</label>
-                    <button onclick="loadMenu()">🔄 載入菜單</button>
+                    <button class="action-btn" onclick="loadMenu()">
+                        <span>🔄</span> 載入菜單
+                    </button>
                 </div>
             </div>
 
@@ -473,6 +571,7 @@
         const LUNCH_FOLDER_ID = '{{LUNCH_FOLDER_ID}}';
         const DINNER_FOLDER_ID = '{{DINNER_FOLDER_ID}}';
         let currentMealType = 'lunch';
+        let currentRestaurantFilter = ''; // Store current filter
         let isLoaderActive = false; // Prevent multiple simultaneous loads
 
         // 設定今天日期為預設值 (Removed as source is today only)
@@ -645,21 +744,39 @@
         }
 
         function updateRestaurantFilter() {
-            const restaurants = [...new Set(allMenus.map(m => m.restaurant))];
-            const select = document.getElementById('restaurantFilter');
+            const restaurants = [...new Set(allMenus.map(m => m.restaurant))].sort();
+            const container = document.getElementById('restaurantFilterChips');
 
-            select.innerHTML = '<option value="">全部餐廳</option>';
+            // Keep "All" button
+            let html = `<div class="filter-chip ${currentRestaurantFilter === '' ? 'active' : ''}" onclick="setRestaurantFilter('')">全部餐廳</div>`;
+
             restaurants.forEach(restaurant => {
-                const option = document.createElement('option');
-                option.value = restaurant;
-                option.textContent = restaurant;
-                select.appendChild(option);
+                const isActive = currentRestaurantFilter === restaurant ? 'active' : '';
+                html += `<div class="filter-chip ${isActive}" onclick="setRestaurantFilter('${restaurant}')">${restaurant}</div>`;
             });
+
+            container.innerHTML = html;
+        }
+
+        function setRestaurantFilter(restaurant) {
+            currentRestaurantFilter = restaurant;
+
+            // Update active state visual
+            const chips = document.querySelectorAll('.filter-chip');
+            chips.forEach(chip => {
+                if (chip.textContent === (restaurant || '全部餐廳')) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+
+            displayMenus();
         }
 
         function displayMenus() {
             // const dateFilter = document.getElementById('dateFilter').value; // Removed
-            const restaurantFilter = document.getElementById('restaurantFilter').value;
+            // const restaurantFilter = document.getElementById('restaurantFilter').value; // OLD
 
             let filteredMenus = allMenus;
 
@@ -670,8 +787,8 @@
             }
             */
 
-            if (restaurantFilter) {
-                filteredMenus = filteredMenus.filter(m => m.restaurant === restaurantFilter);
+            if (currentRestaurantFilter) {
+                filteredMenus = filteredMenus.filter(m => m.restaurant === currentRestaurantFilter);
             }
 
             const container = document.getElementById('menuContainer');
@@ -769,7 +886,7 @@
         // 當篩選條件改變時重新顯示
         // 當篩選條件改變時重新顯示
         // document.getElementById('dateFilter').addEventListener('change', displayMenus); // Removed
-        document.getElementById('restaurantFilter').addEventListener('change', displayMenus);
+        // document.getElementById('restaurantFilter').addEventListener('change', displayMenus); // Removed - using Chips now
 
         // ESC 鍵關閉彈窗
         document.addEventListener('keydown', (e) => {

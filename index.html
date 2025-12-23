@@ -685,9 +685,9 @@
             allMenus = [];
 
             try {
-                // 呼叫 Cloudflare Pages Function
+                // 呼叫 Cloudflare Worker API
                 const response = await fetch(
-                    `/get-menu?type=${currentMealType}`,
+                    `https://company-menu.coojiin.workers.dev/?type=${currentMealType}`,
                     { cache: 'no-store' }
                 );
 

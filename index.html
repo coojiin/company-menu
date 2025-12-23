@@ -870,9 +870,46 @@
                 const section = document.createElement('div');
                 section.className = 'restaurant-section';
 
+                // Section Header
+                const header = document.createElement('div');
+                header.className = 'restaurant-header';
+                header.innerHTML = `
+                    <div class="restaurant-name">${restaurant}</div>
+                    <div class="restaurant-count">${menus.length} 個菜單</div>
                 `;
+                section.appendChild(header);
 
-                container.appendChild(section);
+                // Grid
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+
+                // Cards
+                menus.forEach(menu => {
+                    const card = document.createElement('button'); // Use button for accessibility/keyboard interaction
+                    card.className = 'menu-card';
+                    card.onclick = () => openModal(menu.imageUrl);
+
+                    // Construct Card Content (Template Literal is fine here for readibility, 
+                    // innerHTML on a specifically created element is reasonably fast)
+                    card.innerHTML = `
+                        <div class="menu-image">
+                           <img src="${menu.thumbnailLink}" 
+                                alt="${menu.item}" 
+                                loading="lazy" 
+                                decoding="async"
+                                onload="this.style.opacity=1"
+                                style="width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease;">
+                        </div>
+                        <div class="menu-info">
+                            <div class="menu-name" title="${menu.item}">${menu.item}</div>
+                            <div class="menu-price">${menu.priceDisplay}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                section.appendChild(grid);
+                fragment.appendChild(section);
             });
         }
 
@@ -895,7 +932,7 @@
 
             errorContainer.innerHTML = `
                     < div class="error-message" >
-                    ⚠️ <strong>錯誤:</strong> ${ message }
+                    ⚠️ <strong>錯誤:</strong> ${message}
                 </div >
             `;
         }

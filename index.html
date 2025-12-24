@@ -686,110 +686,58 @@
             if (isLoaderActive) return;
 
             isLoaderActive = true;
-            const loadBtn = document.querySelector('button[onclick="loadMenu()"]');
-            if (loadBtn) {
-                loadBtn.disabled = true;
-                loadBtn.style.opacity = '0.7';
-            }
-
             const container = document.getElementById('menuContainer');
-            const errorContainer = document.getElementById('errorContainer');
-
-            // Show loading state
             container.innerHTML = '<div class="loading">載入美味菜單中...🍱</div>';
-            errorContainer.innerHTML = '';
-
-            // --- Caching Logic Removed per user request for fresh data ---
-            // query: "因為不定期更新，所以還是每次都抓到最新資料"
-            // -----------------------------------------------------------
-            // Reset state explicitly
-            allMenus = [];
 
             try {
-                // 呼叫 Cloudflare Worker API
-                // timestamp for cache busting
-                const t = new Date().getTime();
+                // 核心改動：使用「每分鐘變動一次」的時間戳記 (Cache-Busting)
+                // 這能確保 Worker 的 SWR 邏輯在一分鐘內有效，但又不會讓快取永遠卡死
+                const t = Math.floor(Date.now() / 60000);
                 const response = await fetch(
-                    `https://company-menu.coojiin.workers.dev/?type=${currentMealType}&t=${t}`,
-                    { cache: 'no-store' }
+                    `https://company-menu.coojiin.workers.dev/?type=${currentMealType}&t=${t}`
                 );
 
-                if (!response.ok) {
-                    if (response.status === 403) {
-                        throw new Error('API Key 無效或未啟用 Google Drive API。請確認：\n1. API Key 是否正確\n2. 是否已啟用 Google Drive API\n3. API Key 是否有使用限制');
-                    }
-                    throw new Error(`API 請求失敗 (${response.status})`);
-                }
+                if (!response.ok) throw new Error('伺服器回應異常');
 
                 const data = await response.json();
 
                 if (!data.files || data.files.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
-                            <div class="empty-state-icon">📭</div>
-                            <div class="empty-state-text">資料夾中沒有找到任何檔案</div>
-                            <div style="margin-top:20px; color: #999; font-size: 12px; word-break: break-all;">
-                                Debug Info:<br>
-                                Type: ${currentMealType}<br>
-                                Data: ${JSON.stringify(data).substring(0, 200)}...
-                            </div>
-                        </div>
-                    `;
-                    updateRestaurantFilter(); // Ensure filters are cleared
-                    updateStats(); // Reset stats when no files are found
+                            <div class="empty-state-icon">🍱</div>
+                            <div class="empty-state-text">今日尚未上傳菜單照片喔！</div>
+                        </div>`;
+                    updateStats();
                     return;
                 }
 
-                // 過濾圖片檔案並解析
+                // 解析與顯示邏輯 (維持你原本寫好的部分)
                 allMenus = data.files
                     .filter(file => file.mimeType && file.mimeType.startsWith('image/'))
                     .map(file => {
                         const parsed = parseFileName(file.name);
-                        if (parsed) {
-                            return {
-                                ...parsed,
-                                id: file.id,
-                                thumbnailUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`, // Grid view
-                                largeImageUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w800` // Modal view
-                            };
-                        }
-                        return null;
+                        return parsed ? {
+                            ...parsed,
+                            id: file.id,
+                            thumbnailUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`,
+                            largeImageUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w1000`
+                        } : null;
                     })
-                    .filter(menu => menu !== null);
+                    .filter(m => m !== null);
 
-                if (allMenus.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">🔍</div>
-                             <div class="empty-state-text">找不到符合命名格式的菜單圖片<br><small>檔名格式應為：MMDD餐廳名稱價格元菜單品項.jpg</small></div>
-                        </div>
-                    `;
-                    updateRestaurantFilter(); // Ensure filters are cleared
-                    return;
-                }
-
-                // Cache removed to ensure freshness
-
-                // 更新餐廳篩選選項
                 updateRestaurantFilter();
-
-                // 顯示菜單 (Render ALL once, then filter visibility)
                 displayMenus();
-
-                // 更新統計
                 updateStats();
 
             } catch (error) {
-                console.error(error);
-                showError(error.message);
-                container.innerHTML = '';
+                showError("菜單讀取失敗，請重新整理網頁試試。");
             } finally {
                 isLoaderActive = false;
+                const loadBtn = document.querySelector('button[onclick="loadMenu()"]');
                 if (loadBtn) {
                     loadBtn.disabled = false;
                     loadBtn.style.opacity = '1';
                 }
-                updateStats();
             }
         }
 

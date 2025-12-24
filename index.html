@@ -689,6 +689,9 @@
             const container = document.getElementById('menuContainer');
             container.innerHTML = '<div class="loading">載入美味菜單中...🍱</div>';
 
+            // Reset state explicitly before fetching
+            allMenus = [];
+
             try {
                 // 核心改動：使用「每分鐘變動一次」的時間戳記 (Cache-Busting)
                 // 這能確保 Worker 的 SWR 邏輯在一分鐘內有效，但又不會讓快取永遠卡死
@@ -707,6 +710,7 @@
                             <div class="empty-state-icon">🍱</div>
                             <div class="empty-state-text">今日尚未上傳菜單照片喔！</div>
                         </div>`;
+                    updateRestaurantFilter(); // Clear filter chips
                     updateStats();
                     return;
                 }

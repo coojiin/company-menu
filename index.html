@@ -707,8 +707,10 @@
 
             try {
                 // 呼叫 Cloudflare Worker API
+                // timestamp for cache busting
+                const t = new Date().getTime();
                 const response = await fetch(
-                    `https://company-menu.coojiin.workers.dev/?type=${currentMealType}`,
+                    `https://company-menu.coojiin.workers.dev/?type=${currentMealType}&t=${t}`,
                     { cache: 'no-store' }
                 );
 
@@ -726,6 +728,11 @@
                         <div class="empty-state">
                             <div class="empty-state-icon">📭</div>
                             <div class="empty-state-text">資料夾中沒有找到任何檔案</div>
+                            <div style="margin-top:20px; color: #999; font-size: 12px; word-break: break-all;">
+                                Debug Info:<br>
+                                Type: ${currentMealType}<br>
+                                Data: ${JSON.stringify(data).substring(0, 200)}...
+                            </div>
                         </div>
                     `;
                     updateRestaurantFilter(); // Ensure filters are cleared
@@ -773,6 +780,7 @@
                 updateStats();
 
             } catch (error) {
+                console.error(error);
                 showError(error.message);
                 container.innerHTML = '';
             } finally {

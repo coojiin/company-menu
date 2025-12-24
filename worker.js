@@ -5,7 +5,7 @@ export default {
 
         // 統一 CORS Headers
         const corsHeaders = {
-            'Access-Control-Allow-Origin': 'https://coojiin.github.io',
+            'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type',
             'Content-Type': 'application/json'

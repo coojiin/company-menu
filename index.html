@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://www.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>公司每日菜單瀏覽器</title>
+    <link rel="icon" href="data:,">
     <style>
         html {
             scrollbar-gutter: stable;
@@ -940,9 +941,7 @@
             const errorContainer = document.getElementById('errorContainer');
 
             // If error is related to API Key, show the section
-            if (message.includes('API Key') || message.includes('403')) {
-                document.getElementById('apiKeySection').style.display = 'block';
-            }
+
 
             errorContainer.innerHTML = `
                     < div class="error-message" >

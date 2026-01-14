@@ -44,20 +44,17 @@ async function updateCache(request, env, ctx, corsHeaders) {
     const DINNER_ID = env.DINNER_FOLDER_ID;
 
     // --- 計算台灣當日日期 (MMDD) ---
-    const taiwanTime = new Intl.DateTimeFormat('zh-TW', {
-        timeZone: 'Asia/Taipei',
-        month: '2-digit',
-        day: '2-digit',
-    });
-    const parts = taiwanTime.formatToParts(new Date());
-    const mm = parts.find(p => p.type === 'month').value;
-    const dd = parts.find(p => p.type === 'day').value;
+    // 使用更穩健的方法確保在 edge 環境也能得到正確的 MMDD
+    const taiwanTimeString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Taipei' });
+    const taiwanDate = new Date(taiwanTimeString);
+    const mm = String(taiwanDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(taiwanDate.getDate()).padStart(2, '0');
     const todayStr = mm + dd;
 
     const type = url.searchParams.get('type');
     const folderId = (type === 'dinner') ? DINNER_ID : LUNCH_ID;
 
-    // 使用 name contains 進行初步篩選
+    // 使用 name contains 進行初步篩選，並確保不在垃圾桶
     const googleApiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+name+contains+'${todayStr}'+and+trashed=false&key=${API_KEY}&fields=files(id,name,mimeType,thumbnailLink,webContentLink)&pageSize=1000`;
 
     try {
@@ -69,7 +66,7 @@ async function updateCache(request, env, ctx, corsHeaders) {
 
         // --- 嚴格篩選：檔名必須以 todayStr 開頭 ---
         if (data.files && data.files.length > 0) {
-            data.files = data.files.filter(f => f.name.startsWith(todayStr));
+            data.files = data.files.filter(f => f.name && f.name.startsWith(todayStr));
         }
 
         // --- 防呆機制：只有當有檔案時才寫入快取 ---

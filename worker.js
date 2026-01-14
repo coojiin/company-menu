@@ -43,10 +43,22 @@ async function updateCache(request, env, ctx, corsHeaders) {
     const LUNCH_ID = env.LUNCH_FOLDER_ID;
     const DINNER_ID = env.DINNER_FOLDER_ID;
 
+    // --- 計算台灣當日日期 (MMDD) ---
+    const taiwanTime = new Intl.DateTimeFormat('zh-TW', {
+        timeZone: 'Asia/Taipei',
+        month: '2-digit',
+        day: '2-digit',
+    });
+    const parts = taiwanTime.formatToParts(new Date());
+    const mm = parts.find(p => p.type === 'month').value;
+    const dd = parts.find(p => p.type === 'day').value;
+    const todayStr = mm + dd;
+
     const type = url.searchParams.get('type');
     const folderId = (type === 'dinner') ? DINNER_ID : LUNCH_ID;
 
-    const googleApiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${API_KEY}&fields=files(id,name,mimeType,thumbnailLink,webContentLink)&pageSize=1000`;
+    // 使用 name contains 進行初步篩選
+    const googleApiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+name+contains+'${todayStr}'+and+trashed=false&key=${API_KEY}&fields=files(id,name,mimeType,thumbnailLink,webContentLink)&pageSize=1000`;
 
     try {
         const driveResponse = await fetch(googleApiUrl, {
@@ -54,6 +66,11 @@ async function updateCache(request, env, ctx, corsHeaders) {
         });
 
         const data = await driveResponse.json();
+
+        // --- 嚴格篩選：檔名必須以 todayStr 開頭 ---
+        if (data.files && data.files.length > 0) {
+            data.files = data.files.filter(f => f.name.startsWith(todayStr));
+        }
 
         // --- 防呆機制：只有當有檔案時才寫入快取 ---
         if (data.files && data.files.length > 0) {
@@ -69,7 +86,7 @@ async function updateCache(request, env, ctx, corsHeaders) {
             return response;
         } else {
             // 如果是空的，直接回傳但不存快取，讓下次請求能再次嘗試
-            return new Response(JSON.stringify(data), {
+            return new Response(JSON.stringify({ files: [] }), {
                 headers: { ...corsHeaders, 'Cache-Control': 'no-store' }
             });
         }
